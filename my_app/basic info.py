@@ -1,17 +1,27 @@
+# import streamlit as st
+# import pandas as pd
+
+# df=pd.read_csv("/workspaces/streamlit_app/Customers.csv")
+
+# st.dataframe(df,use_container_width=True)
+
+# for i in df.columns:
+#     st.write(i)
+
 import streamlit as st
-import pandas as pd
-import numpy as np 
 
-st.set_page_config(page_title="Basic Statistics")
+st.title('Streamlit Multiselect Example')
 
-st.write("# Data Cleaner App")
-st.write("A simple data cleaner app that can simplify the task of cleaning data.")
+# Define options for multiselect
+options = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
 
-# Adding a horizontal line
-st.markdown("<hr>", unsafe_allow_html=True)
+# Create a multiselect widget
+selected_fruits = st.multiselect('Select your favorite fruits:', options)
 
-upload=st.file_uploader("uplaod CSV file here",type=["csv","xls"])
+# Display the selected fruits
+if selected_fruits:
+    st.write('You selected:', ', '.join(selected_fruits))
+else:
+    st.write('No fruits selected.')
 
-df=pd.read_csv(upload)
-
-st.dataframe(df,use_container_width=True)
+st.write(selected_fruits)

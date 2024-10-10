@@ -24,6 +24,8 @@ st.dataframe(df,use_container_width=True)
 
 hr()
 
+st.write("#")
+
 st.write("# basic info of your Data")
 
 count_data=df.count()
@@ -32,7 +34,7 @@ tab1, tab2,tab3=st.tabs(["Over view of your data","Cleaning","Feature Engineerin
 
 with tab1:
 
-    col1,col2,col3=st.columns(3)
+    col1,col2,col3 =st.columns(3)
 
     with col1:
         st.subheader("mean")
