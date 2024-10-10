@@ -1,27 +1,22 @@
-# import streamlit as st
-# import pandas as pd
-
-# df=pd.read_csv("/workspaces/streamlit_app/Customers.csv")
-
-# st.dataframe(df,use_container_width=True)
-
-# for i in df.columns:
-#     st.write(i)
-
 import streamlit as st
 
-st.title('Streamlit Multiselect Example')
+# Create columns with specified width ratios
+col1, col2, col3 = st.columns([1, 2, 2])  # 1:2:1 ratio
 
-# Define options for multiselect
-options = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape']
+# Add content to the first column
+with col1:
+    st.header("Column 1")
+    st.button("Button 1")
 
-# Create a multiselect widget
-selected_fruits = st.multiselect('Select your favorite fruits:', options)
+# Add content to the second column
+with col2:
+    st.header("Column 2")
+    st.text_input("Input here")
 
-# Display the selected fruits
-if selected_fruits:
-    st.write('You selected:', ', '.join(selected_fruits))
-else:
-    st.write('No fruits selected.')
+# Add content to the third column
+with col3:
+    st.header("Column 3")
+    st.checkbox("Check me!")
 
-st.write(selected_fruits)
+# You can also add more elements below the columns if needed
+st.write("This is below the columns.")
