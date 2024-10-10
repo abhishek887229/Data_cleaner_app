@@ -5,6 +5,13 @@ import statistics as sts
 def hr():
     st.markdown("<hr>", unsafe_allow_html=True)
 
+
+def seprator(data_base):
+    category1,category2=[]
+
+    if data_base.dtype
+
+
 st.set_page_config(page_title="Data Cleaner App")
 
 st.write("# Data Cleaner App")
@@ -15,14 +22,14 @@ hr()
 
 # File uploader for CSV files
 uploaded_file = st.file_uploader("Upload CSV file here", type=["csv", "xls"])
+hr()
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
     st.dataframe(df, use_container_width=True)
 
-    hr()
-
+    
     st.write("# Basic Info of Your Data")
 
     count_data = df.count()
