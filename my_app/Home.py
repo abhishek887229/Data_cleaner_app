@@ -34,33 +34,36 @@ if uploaded_file:
         columns1 = df.columns.tolist()
         selected_column = st.selectbox("Select column", columns1)
 
-        if selected_column:
-            col1, col2, col3 = st.columns(3)
+        try:
+            if selected_column:
+                col1, col2, col3 = st.columns(3)
 
-            with col1:
-                st.subheader("Mean")
-                st.write(df[selected_column].mean())
+                with col1:
+                    st.subheader("Mean")
+                    st.write(df[selected_column].mean())
 
-            with col2:
-                st.subheader("Median")
-                st.write(df[selected_column].median())
+                with col2:
+                    st.subheader("Median")
+                    st.write(df[selected_column].median())
 
-            with col3:
-                st.subheader("Rows/Columns")
-                st.write(f"{count_data[selected_column]}/{len(df.columns)}")
+                with col3:
+                    st.subheader("Rows/Columns")
+                    st.write(f"{count_data[selected_column]}/{len(df.columns)}")
 
-            col4, col5, col6 = st.columns(3)
+                col4, col5, col6 = st.columns(3)
 
-            with col4:
-                st.subheader("Unique Values")
-                st.write(len(df[selected_column].unique()))
+                with col4:
+                    st.subheader("Unique Values")
+                    st.write(len(df[selected_column].unique()))
 
-            with col5:
-                st.subheader("Mode")
-                try:
-                    st.write(sts.mode(df[selected_column]))
-                except Exception as e:
-                    st.write("No mode found.")
+                with col5:
+                    st.subheader("Mode")
+                    try:
+                        st.write(sts.mode(df[selected_column]))
+                    except Exception as e:
+                        st.write("No mode found.")
+        except:
+            st.error(" some error coours change columns")
 
     with tab2:
         st.title("Select Columns You Want to Drop")
@@ -77,31 +80,32 @@ if uploaded_file:
         # Display the updated DataFrame
         st.dataframe(df.head())
 
-        st.markdown("<hr>", unsafe_allow_html=False)
+        hr()
 
         st.title("# Change Your Data Type")
 
         col1, col2, col3 = st.columns([2, 1, 1])
+        try:
+            with col1:
+                columns1 = df.columns.tolist()
+                select_cols = st.selectbox("Select column", columns1)
+                st.write("Selected column:", select_cols)
 
-        with col1:
-            columns1 = df.columns.tolist()
-            select_cols = st.selectbox("Select column", columns1)
-            st.write("Selected column:", select_cols)
+            with col2:
+                data_type = ['int64', 'float64', 'bool', 'object', 'string', 'datetime64[ns]', 'timedelta[ns]']
+                select_datatype = st.selectbox("Select Data Type", data_type)
+                st.write("Selected Data Type:", select_datatype)
 
-        with col2:
-            data_type = ['int64', 'float64', 'bool', 'object', 'string', 'datetime64[ns]', 'timedelta[ns]']
-            select_datatype = st.selectbox("Select Data Type", data_type)
-            st.write("Selected Data Type:", select_datatype)
-
-        with col3:
-            if st.button("Apply"):
-                try:
-                    # Change the data type of the selected column
-                    df[select_cols] = df[select_cols].astype(select_datatype)
-                    st.success(f"Successfully converted '{select_cols}' to data type '{select_datatype}'")
-                except Exception as e:
-                    st.error(f"Error converting '{select_cols}': {e}")
-
+            with col3:
+                if st.button("Apply"):
+                    try:
+                        # Change the data type of the selected column
+                        df[select_cols] = df[select_cols].astype(select_datatype)
+                        st.success(f"Successfully converted '{select_cols}' to data type '{select_datatype}'")
+                    except Exception as e:
+                        st.error(f"Error converting '{select_cols}': {e}")
+        except:
+            st.warning("some illevent data type is here please reomve it")
         # Display updated data types
         st.write("Data Types of Each Column:")
         for i in df.columns:
