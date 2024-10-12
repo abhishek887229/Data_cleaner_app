@@ -1,28 +1,42 @@
 import streamlit as st
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import statistics as sts
 
 def categorized_cols(dataframe):
-    num_cols=df.select_dtypes(include=["int32","int64","float32","float64"]).columns.tolist()
-    categorical_col=df.select_dtypes(include=["object","category","string"]).columns.tolist()
-    boolean_cols=df.select_dtypes(include=["bool"]).columns.tolist()
-    date_time_cols=df.select_dtypes(include=["datetime64","datetime","timedelta","timedelta64"]).columns.tolist()
+    num_cols = df.select_dtypes(include=["int32", "int64", "float32", "float64"]).columns.tolist()
+    categorical_col = df.select_dtypes(include=["object", "category", "string"]).columns.tolist()
+    boolean_cols = df.select_dtypes(include=["bool"]).columns.tolist()
+    date_time_cols = df.select_dtypes(include=["datetime64", "datetime", "timedelta", "timedelta64"]).columns.tolist()
 
-    return num_cols,categorical_col,boolean_cols,date_time_cols 
+    return num_cols, categorical_col, boolean_cols, date_time_cols
 
 
 def hr():
     st.markdown("<hr>", unsafe_allow_html=True)
 
+
 def check_duplicate(dataset):
     return dataset.duplicated().sum()
+global null_columns
+null_columns=[]
+def find_null_cols(data):
+    for i in data.columns:
+        if data[i].isnull().sum()>0:
+            null_columns.append(i)
+
+
+    
+    # Select box for columns with null values
+    return 
+
 
 st.set_page_config(page_title="Data Cleaner App")
 
 st.write("# Data Cleaner App")
 st.write("A simple data cleaner app that can simplify the task of cleaning data.")
 
-# Adding a horizontal line
 hr()
 
 # File uploader for CSV files
@@ -38,7 +52,7 @@ if uploaded_file:
         st.write("# Basic Info of Your Data")
         count_data = df.count()
 
-        tab1, tab2, tab3 = st.tabs(["Over view of data", "Explore text Data", "Date time"])
+        tab1, tab2, tab3 = st.tabs(["Overview of data", "Explore text Data", "Date time"])
 
         with tab1:
             st.subheader("Select a Column for Basic Statistics")
@@ -73,63 +87,18 @@ if uploaded_file:
                     except Exception:
                         st.write("No mode found or error in calculating mode.")
 
-        # with tab2:
-        #     st.title("Select Columns You Want to Drop")
-
-        #     # Select columns to drop
-        #     columns = df.columns.tolist()
-        #     select_columns = st.multiselect("Select columns to drop", columns)
-
-        #     # Drop selected columns from the DataFrame
-        #     if select_columns:
-        #         df.drop(columns=select_columns, inplace=True)
-        #         st.success(f"Dropped columns: {', '.join(select_columns)}")
-
-        #     # Display the updated DataFrame
-        #     st.dataframe(df.head())
-
-        #     hr()
-
-        #     st.title("# Change Your Data Type")
-
-        #     col1, col2, col3 = st.columns([2, 1, 1])
-
-        #     try:
-        #         with col1:
-        #             select_cols = st.selectbox("Select column", df.columns.tolist())
-        #             st.write("Selected column:", select_cols)
-
-        #         with col2:
-        #             data_type = ['int64', 'float64', 'bool', 'object', 'string', 'datetime64[ns]', 'timedelta[ns]']
-        #             select_datatype = st.selectbox("Select Data Type", data_type)
-        #             st.write("Selected Data Type:", select_datatype)
-
-        #         with col3:
-        #             if st.button("Apply"):
-        #                 try:
-        #                     # Change the data type of the selected column
-        #                     df[select_cols] = df[select_cols].astype(select_datatype)
-        #                     st.success(f"Successfully converted '{select_cols}' to data type '{select_datatype}'")
-        #                 except Exception as e:
-        #                     st.error(f"Error converting '{select_cols}': {e}")
-        #     except Exception:
-        #         st.warning("Some invalid data type is present. Please remove it.")
-
-        #     # Display updated data types
-        #     st.write("Data Types of Each Column:")
-        #     for col in df.columns:
-        #         st.write(f"{col}: {df[col].dtype}")
         with tab2:
-            columns_of_category=categorized_cols(df)[1]
-            select_data=st.selectbox("select Category to analyze",columns_of_category)
+            columns_of_category = categorized_cols(df)[1]
+            select_data = st.selectbox("Select Category to analyze", columns_of_category)
             if select_data:
-                
-                st.write(f"total count {df[select_data].count()}")
-            else:
-                pass
+                st.write(f"Total count: {df[select_data].count()}")
 
         with tab3:
             st.write("Feature Engineering placeholder")
+
+        st.write("Chart to show distribution")
+        sns.boxplot(df[selected_column])
+        plt.show()
 
         hr()
 
@@ -148,23 +117,31 @@ if uploaded_file:
             if st.button("Remove Duplicates"):
                 df.drop_duplicates(inplace=True)
                 duplicated_count = check_duplicate(df)  # Update duplicate count
-    
-            else:
-                pass
 
     except Exception as e:
         st.error(f"Error processing file: {e}")
-    
-    st.write("# handling Null Values:-")
+
+    st.write("# Handling Null Values:")
     st.write(" ")
-    tab1,tab2,tab3,tab4,tab5=st.tabs(["simple impute","mean imputation","median imputation","KNN imputation","regression Imptation"])
+
+    # Tabs for different types of imputations
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Simple Impute", "Mean Imputation", "Median Imputation", "KNN Imputation", "Regression Imputation"])
+
+    # Code to find columns with null values
+    null_columns_list = [col for col in df.columns if df[col].isnull().sum() > 0]
+
+    # ... (existing code)
 
     with tab1:
-        x=st.number_input("enter a number you want to replace Null values with")
-        if x:
-            df.fillna(x)
-        else:
-            pass
+            col1, col2 = st.columns(2)
+            with col1:
+                imputation_methods = ["Simple Imputation", "Mean Imputation", "Median Imputation", "KNN Imputation", "Regression Imputation"]
+
+                if imputation_methods==imputation_methods[0]:
+                    pass
+                else:
+                    pass
+
 
 else:
     st.warning("Please upload a CSV file to get started.")
