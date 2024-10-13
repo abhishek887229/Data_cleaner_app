@@ -300,8 +300,8 @@ if uploaded_file:
 
                 st.write("will update soon")
             
-            st.dataframe(st.session_state.df, use_container_width=True)
-            st.write("### Visualization of Encoded Categories")
+        st.dataframe(st.session_state.df, use_container_width=True)
+        st.write("### Visualization of Encoded Categories")
     
     # Check if any new columns were created for visual representation
         if encoder_type == "One-Hot Encoder":
