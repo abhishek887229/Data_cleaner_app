@@ -242,12 +242,11 @@ if uploaded_file:
                     'Column Name': [null_column_select],
                     'Null Count': [null_value_count]
                 })
-                st.write(null_counts_df)
+                st.DataFrame(null_counts_df,use_container_width=True)
         
         
         hr()
         st.write("# Data Transformation")
-        st.write("#### this section is about Data transformation you will get various methods to transform data")
         st.write(" ")
         st.write(" ")
         col1_for_transformation,col2_for_transformation=st.columns(2)
@@ -277,10 +276,7 @@ if uploaded_file:
 
 
         with col2_for_transformation:
-            st.write("#### Data Encoding")
-            st.write("convert Categorical data into Numbers using Encoding")
-            st.write(" ")
-            st.write(" ")
+            st.write("#### Data Encoding for Categorical Data")
             encoder_type=st.selectbox("select method of encoding",["labelEncoder","Ordinal Encoder","One-hot-encoder"])
             columns_for_encoding=st.selectbox("select the column you want to apply encoding",columns_of_category)
             apply_change=st.button("apply Change")
@@ -306,7 +302,6 @@ if uploaded_file:
 
         hr()
         st.write("# Remove columns")
-        st.write("Select Columns You Want to Drop")
 
         # Select columns to drop
         columns = df.columns.tolist()
