@@ -2,8 +2,7 @@ streamlit
 pandas
 numpy
 matplotlib
-seabon
-plotly
+seaborn
 statistics
 io
 scikit-learn
