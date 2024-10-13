@@ -317,7 +317,10 @@ if uploaded_file:
                 ax.set_xlabel("Encoded Categories")
                 plt.xticks(rotation=90)
                 st.pyplot(fig)
-
+            else:
+                pass
+        else:
+            pass
 
 
 
