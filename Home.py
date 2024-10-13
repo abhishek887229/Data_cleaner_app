@@ -41,15 +41,7 @@ hr()
 
 if st.button("Reset"):
     st.session_state.clear()  # Clear all session state
-    st.experimental_rerun()    # Refresh the app to its initial state
-
-# Check if a file has been uploaded
-if "df" in st.session_state:
-    df = st.session_state.df 
-    df_copy = df.copy()  # Use the DataFrame stored in session_state
-    st.dataframe(df_copy, use_container_width=True)
-else:
-    uploaded_file = st.file_uploader("Upload your CSV or Excel file here", type=["csv", "xls"])
+uploaded_file = st.file_uploader("Upload your CSV or Excel file here", type=["csv", "xls"])
 st.write(" ")
 if uploaded_file:
     try:
