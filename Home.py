@@ -42,7 +42,10 @@ hr()
 # File uploader for CSV or Excel files
 uploaded_file = st.file_uploader("Upload your CSV or Excel file here", type=["csv", "xls"])
 hr()
-
+if st.button("Reset"):
+    st.session_state.clear()
+    st.experimental_rerun()
+st.write(" ")
 if uploaded_file:
     try:
         # Load the uploaded file as a DataFrame
@@ -374,4 +377,3 @@ if uploaded_file:
 
 else:
     st.warning("Please upload a CSV or Excel file to get started.") 
-    st.experimental_rerun()
