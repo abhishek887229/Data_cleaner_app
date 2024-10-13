@@ -290,7 +290,7 @@ if uploaded_file:
                 st.session_state.df=df
             elif (encoder_type=="One-hot-encoder") and (apply_change):
 
-                df[new_category_column_name]=pd.get_dummies(df,columns=columns_for_encoding)
+                df[new_category_column_name]=pd.get_dummies(df,columns=[columns_for_encoding])
                 st.session_state.df=df
 
             elif (encoder_type=="Ordinal Encoder") and (apply_change):
