@@ -288,7 +288,7 @@ if uploaded_file:
                 le=LabelEncoder()
                 df[new_category_column_name]=le.fit_transform(df["mid_process_encoder"])
                 st.session_state.df=df
-            elif encoder_type == "One-Hot Encoder":
+            elif encoder_type == "One-hot-encoder" and (apply_change):
                 try:
                     df = pd.get_dummies(df, columns=[columns_for_encoding], drop_first=True)  # Avoid dummy variable trap
                     st.session_state.df = df
@@ -304,7 +304,7 @@ if uploaded_file:
         st.write("### Visualization of Encoded Categories")
     
     # Check if any new columns were created for visual representation
-        if encoder_type == "One-Hot Encoder":
+        if encoder_type == "One-hot-encoder":
         # Show the names of the new one-hot encoded columns
             new_columns = [col for col in df.columns if columns_for_encoding in col]
             if new_columns:
