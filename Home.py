@@ -307,14 +307,14 @@ if uploaded_file:
         if encoder_type == "One-Hot Encoder":
         # Show the names of the new one-hot encoded columns
         new_columns = [col for col in df.columns if columns_for_encoding in col]
-        if new_columns:
-            fig, ax = plt.subplots(figsize=(10, 5))
-            df[new_columns].sum().plot(kind='bar', ax=ax)
-            ax.set_title(f"Sum of One-Hot Encoded Features for '{columns_for_encoding}'")
-            ax.set_ylabel("Count")
-            ax.set_xlabel("Encoded Categories")
-            plt.xticks(rotation=90)
-            st.pyplot(fig)
+            if new_columns:
+                fig, ax = plt.subplots(figsize=(10, 5))
+                df[new_columns].sum().plot(kind='bar', ax=ax)
+                ax.set_title(f"Sum of One-Hot Encoded Features for '{columns_for_encoding}'")
+                ax.set_ylabel("Count")
+                ax.set_xlabel("Encoded Categories")
+                plt.xticks(rotation=90)
+                st.pyplot(fig)
 
 
 
