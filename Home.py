@@ -49,9 +49,9 @@ if uploaded_file:
         if "df" not in st.session_state:
             # Store the DataFrame in session_state to persist it across user interactions
             st.session_state.df = pd.read_csv(uploaded_file)
-        
+        df_copy=df.copy()
         df = st.session_state.df  # Use the DataFrame stored in session_state
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df_copy, use_container_width=True)
 
         st.write("# Basic Info of Data")
         count_data = df.count()
