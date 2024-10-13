@@ -306,7 +306,7 @@ if uploaded_file:
     # Check if any new columns were created for visual representation
         if encoder_type == "One-Hot Encoder":
         # Show the names of the new one-hot encoded columns
-        new_columns = [col for col in df.columns if columns_for_encoding in col]
+            new_columns = [col for col in df.columns if columns_for_encoding in col]
             if new_columns:
                 fig, ax = plt.subplots(figsize=(10, 5))
                 df[new_columns].sum().plot(kind='bar', ax=ax)
