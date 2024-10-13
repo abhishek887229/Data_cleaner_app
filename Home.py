@@ -286,7 +286,10 @@ if uploaded_file:
 
                 le=LabelEncoder()
                 df[new_category_column_name]=le.fit_transform(df["mid_process_encoder"])
+                #drop mid process encoder
+                df.drop(columns=["mid_process_encoder"],inplace=True)
                 st.session_state.df=df
+                
             elif encoder_type == "One-hot-encoder" and (apply_change):
                 try:
                     df = pd.get_dummies(df, columns=[columns_for_encoding], drop_first=True)  # Avoid dummy variable trap
