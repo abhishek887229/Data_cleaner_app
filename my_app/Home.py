@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import statistics as sts
 from sklearn.impute import KNNImputer
+import io 
 
 # Function to categorize DataFrame columns
 def categorized_cols(df):
@@ -32,7 +33,7 @@ def null_column_finder(df):
 
 # Streamlit app configuration
 st.set_page_config(page_title="Data Cleaner App", layout="wide")
-st.write("# Data Cleaner App")
+st.write("# Data Cleaner App ")
 st.write("Easily clean and explore your data with a simple, user-friendly interface.")
 
 hr()
@@ -51,7 +52,7 @@ if uploaded_file:
         df = st.session_state.df  # Use the DataFrame stored in session_state
         st.dataframe(df, use_container_width=True)
 
-        st.write("## Basic Info of Your Data")
+        st.write("# Basic Info of Data")
         count_data = df.count()
 
         tab1, tab2, tab3 = st.tabs(["Overview of Data", "Explore Text Data", "Date Time Data"])
@@ -59,8 +60,8 @@ if uploaded_file:
         # Overview Tab
         with tab1:
             st.subheader("Select a Column for Basic Statistics")
-            columns1 = categorized_cols(df)[0]
-            selected_column = st.selectbox("Select a column", columns1)
+            all_num_cols = categorized_cols(df)[0]
+            selected_column = st.selectbox("Select a column", all_num_cols)
 
             if selected_column:
                 col1, col2, col3 = st.columns(3)
@@ -95,13 +96,13 @@ if uploaded_file:
 
                 with colx:
                     st.write(f"Distribution Chart for {selected_column}")
-                    fig, ax = plt.subplots(figsize=(4, 4))
+                    fig, ax = plt.subplots(figsize=(2,2))
                     sns.boxplot(data=df, x=selected_column, ax=ax)
                     st.pyplot(fig)
 
                 with coly:
                     st.write("Histogram")
-                    fig, ax = plt.subplots(figsize=(4, 4))
+                    fig, ax = plt.subplots(figsize=(2,2))
                     sns.histplot(data=df, x=selected_column, bins=30, kde=True)
                     st.pyplot(fig)
 
@@ -130,7 +131,7 @@ if uploaded_file:
 
                 with col_chart1:
                     st.write(f"Pie Chart for {value_select}")
-                    fig, ax = plt.subplots(figsize=(4, 4))
+                    fig, ax = plt.subplots(figsize=(2,2))
                     
                     value_counts = df[value_select].value_counts()
                     total = value_counts.sum()
@@ -141,7 +142,7 @@ if uploaded_file:
 
                 with col_chart2:
                     st.write(f"Bar Chart for {value_select}")
-                    fig, ax = plt.subplots(figsize=(4, 4))
+                    fig, ax = plt.subplots(figsize=(2,2))
                     ax.bar(value_counts.index, value_counts.values)
                     ax.set_xlabel("Categories")
                     ax.set_ylabel("Count")
@@ -185,28 +186,48 @@ if uploaded_file:
                 null_column_select = st.selectbox("Select Column", null_columns)
 
                 if imputation_type == "Simple Impute":
-                    imputer_value = st.number_input("Enter the imputer value", value=0)
+                    # Check if the selected column is categorical or numerical
+                    if df[null_column_select].dtype in ['object', 'category', 'string']:
+                        imputer_value = st.selectbox("Select a category to impute", df[null_column_select].unique())
+                    else:
+                        imputer_value = st.number_input("Enter the imputer value", value=0.0)
+
                     if st.button("Apply Simple Imputation"):
-                        df[null_column_select].fillna(imputer_value, inplace=True)
-                        st.session_state.df = df
-                        st.success(f"Null values in '{null_column_select}' filled with {imputer_value}.")
-                
+                        try:
+                            df[null_column_select].fillna(imputer_value, inplace=True)
+                            st.session_state.df = df
+                            st.success(f"Null values in '{null_column_select}' filled with {imputer_value}.")
+                        except Exception as e:
+                            st.error(f"Error during simple imputation: {e}")
+
                 elif imputation_type == "Mean Imputation":
                     if st.button("Apply Mean Imputation"):
-                        df[null_column_select].fillna(df[null_column_select].mean(), inplace=True)
-                        st.session_state.df = df
+                        try:
+                            df[null_column_select].fillna(df[null_column_select].mean(), inplace=True)
+                            st.session_state.df = df
+                            st.success(f"Null values in '{null_column_select}' filled with mean.")
+                        except Exception as e:
+                            st.error(f"Error during mean imputation: {e}")
 
                 elif imputation_type == "Median Imputation":
                     if st.button("Apply Median Imputation"):
-                        df[null_column_select].fillna(df[null_column_select].median(), inplace=True)
-                        st.session_state.df = df
+                        try:
+                            df[null_column_select].fillna(df[null_column_select].median(), inplace=True)
+                            st.session_state.df = df
+                            st.success(f"Null values in '{null_column_select}' filled with median.")
+                        except Exception as e:
+                            st.error(f"Error during median imputation: {e}")
 
                 elif imputation_type == "KNN Imputation":
                     knn_value = st.number_input("Number of Neighbors", value=5)
                     if st.button("Apply KNN Imputation"):
-                        imputer = KNNImputer(n_neighbors=knn_value)
-                        df[null_column_select] = imputer.fit_transform(df[[null_column_select]])
-                        st.session_state.df = df
+                        try:
+                            imputer = KNNImputer(n_neighbors=knn_value)
+                            df[null_column_select] = imputer.fit_transform(df[[null_column_select]])
+                            st.session_state.df = df
+                            st.success(f"KNN imputation applied to '{null_column_select}'.")
+                        except Exception as e:
+                            st.error(f"Error during KNN imputation: {e}")
 
         with col2:
             # Check if null_column_select is not None before displaying null values
@@ -217,6 +238,82 @@ if uploaded_file:
                     'Null Count': [null_value_count]
                 })
                 st.write(null_counts_df)
+        hr()
+        hr()
+        st.write("# Remove columns")
+        st.write("Select Columns You Want to Drop")
+
+        # Select columns to drop
+        columns = df.columns.tolist()
+        select_columns = st.multiselect("Select columns to drop", columns)
+
+        # Drop selected columns from the DataFrame
+        if select_columns:
+            df.drop(columns=select_columns, inplace=True)
+            st.success(f"Dropped columns: {', '.join(select_columns)}")
+            st.session_state.df=df
+        else:
+            st.session_state.df=df
+
+        # Display the updated DataFrame
+        st.dataframe(df.head())
+        
+        hr()
+        st.write("# Data Transformation")
+        st.write("#### this section is about Data transformation you will get various methods to transform data")
+        st.write(" ")
+        st.write(" ")
+        col1_for_transformation,col2_for_transformation=st.columns(2)
+
+        with col1_for_transformation:
+
+            st.write(" Normalization and Standardization for Data")
+            
+            Normal_or_standard=st.selectbox("select what kind of Transformation you want?",["Normalization","Standardization"])
+            Normalization_select=st.selectbox("select a column for transformation",all_num_cols)
+            new_cols=f"{Normalization_select}_Normalize"
+            std_new_cols=f"{Normalization_select}_standardize"
+            button_to_appply_transformation=st.button("Apply")
+            try :
+                if Normalization_select and Normal_or_standard=="Normalization" and button_to_appply_transformation:
+                    df[new_cols]=(df[Normalization_select]-df[Normalization_select].min()/(df[Normalization_select].max()-df[Normalization_select].min()))
+                    st.session_state.df=df
+                elif Normalization_select and Normal_or_standard=="Standardization" and button_to_appply_transformation:
+                    df[std_new_cols]=(df[Normalization_select]-df[Normalization_select].mean())/df[Normalization_select].std()
+                    st.session_state.df=df
+                else:
+                    st.session_state.df=df
+
+            except Exception as e:
+                st.warning(e)
+
+
+
+        with col2_for_transformation:
+            pass
+
+        # Download button for modified CSV
+        hr()
+        st.write("### Download Your Cleaned Data")
+        
+        # Convert the modified DataFrame to CSV in memory buffer
+        if "df" in st.session_state:
+            csv_buffer = io.StringIO()
+            st.session_state.df.to_csv(csv_buffer, index=False)  # Ensure this DataFrame is the one you want to export
+            csv_data = csv_buffer.getvalue()
+
+            st.download_button(
+                label="Download Cleaned CSV",
+                data=csv_data,
+                file_name="cleaned_data.csv",
+                mime="text/csv",
+            )
+        else:
+            st.session_state.df=df
+
+        
+
+
 
     except Exception as e:
         st.error(f"Error processing file: {e}")
