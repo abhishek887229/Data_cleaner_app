@@ -42,14 +42,14 @@ hr()
 # File uploader for CSV or Excel files
 uploaded_file = st.file_uploader("Upload your CSV or Excel file here", type=["csv", "xls"])
 hr()
-df_copy=pd.read_csv(uploaded_file)
 if uploaded_file:
     try:
         # Load the uploaded file as a DataFrame
         if "df" not in st.session_state:
             # Store the DataFrame in session_state to persist it across user interactions
             st.session_state.df = pd.read_csv(uploaded_file)
-        df = st.session_state.df  # Use the DataFrame stored in session_state
+        df = st.session_state.df 
+        df_copy=df.copy() # Use the DataFrame stored in session_state
         st.dataframe(df_copy, use_container_width=True)
 
         st.write("# Basic Info of Data")
