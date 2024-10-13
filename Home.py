@@ -38,7 +38,7 @@ st.write("# Data Cleaner App ")
 st.write("Easily clean and explore your data with a simple, user-friendly interface.")
 
 hr()
-
+st.write("if things not work as ussual click on reset button")
 if st.button("Reset"):
     st.session_state.clear()  # Clear all session state
 uploaded_file = st.file_uploader("Upload your CSV or Excel file here", type=["csv", "xls"])
