@@ -374,3 +374,4 @@ if uploaded_file:
 
 else:
     st.warning("Please upload a CSV or Excel file to get started.") 
+    st.experimental_rerun()
