@@ -288,14 +288,33 @@ if uploaded_file:
                 le=LabelEncoder()
                 df[new_category_column_name]=le.fit_transform(df["mid_process_encoder"])
                 st.session_state.df=df
-            elif (encoder_type=="One-hot-encoder") and (apply_change):
-
-                df=pd.get_dummies(df,columns=[columns_for_encoding])
-                st.session_state.df=df
+            elif encoder_type == "One-Hot Encoder":
+                try:
+                    df = pd.get_dummies(df, columns=[columns_for_encoding], drop_first=True)  # Avoid dummy variable trap
+                    st.session_state.df = df
+                    st.success(f"One-Hot Encoding applied to '{columns_for_encoding}'.")
+                except Exception as e:
+                    st.error(f"Error during One-Hot Encoding: {e}")
 
             elif (encoder_type=="Ordinal Encoder") and (apply_change):
 
                 st.write("will update soon")
+            
+            st.dataframe(st.session_state.df, use_container_width=True)
+            st.write("### Visualization of Encoded Categories")
+    
+    # Check if any new columns were created for visual representation
+        if encoder_type == "One-Hot Encoder":
+        # Show the names of the new one-hot encoded columns
+        new_columns = [col for col in df.columns if columns_for_encoding in col]
+        if new_columns:
+            fig, ax = plt.subplots(figsize=(10, 5))
+            df[new_columns].sum().plot(kind='bar', ax=ax)
+            ax.set_title(f"Sum of One-Hot Encoded Features for '{columns_for_encoding}'")
+            ax.set_ylabel("Count")
+            ax.set_xlabel("Encoded Categories")
+            plt.xticks(rotation=90)
+            st.pyplot(fig)
 
 
 
