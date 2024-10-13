@@ -4,8 +4,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import statistics as sts
 from sklearn.impute import KNNImputer
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
-import io
+from sklearn.preprocessing import LabelEncoder,OrdinalEncoder
+import io 
 
 # Function to categorize DataFrame columns
 def categorized_cols(df):
@@ -45,10 +45,12 @@ hr()
 
 if uploaded_file:
     try:
+        # Load the uploaded file as a DataFrame
         if "df" not in st.session_state:
+            # Store the DataFrame in session_state to persist it across user interactions
             st.session_state.df = pd.read_csv(uploaded_file)
         
-        df = st.session_state.df
+        df = st.session_state.df  # Use the DataFrame stored in session_state
         st.dataframe(df, use_container_width=True)
 
         st.write("# Basic Info of Data")
@@ -95,25 +97,26 @@ if uploaded_file:
 
                 with colx:
                     st.write(f"Distribution Chart for {selected_column}")
-                    fig, ax = plt.subplots(figsize=(6, 4))
+                    fig, ax = plt.subplots(figsize=(6,4))
                     sns.boxplot(data=df, x=selected_column, ax=ax)
+                    plt.xticks(rotation=90)
                     st.pyplot(fig)
 
                 with coly:
                     st.write("Histogram")
-                    fig, ax = plt.subplots(figsize=(6, 4))
+                    fig, ax = plt.subplots(figsize=(6,4))
                     sns.histplot(data=df, x=selected_column, bins=30, kde=True)
+                    plt.xticks(rotation=90)
                     st.pyplot(fig)
 
         # Explore Text Data Tab
         with tab2:
             st.subheader("Explore Text Data")
             columns_of_category = categorized_cols(df)[1]
+            col1, col2, col3 = st.columns(3)
             value_select = st.selectbox("Select Categorical Column", columns_of_category)
             
             if value_select:
-                col1, col2, col3 = st.columns(3)
-                
                 with col1:
                     st.write("Value Count")
                     st.write(df[value_select].count())
@@ -131,13 +134,14 @@ if uploaded_file:
 
                 with col_chart1:
                     st.write(f"Pie Chart for {value_select}")
-                    fig, ax = plt.subplots(figsize=(6, 6))
+                    fig, ax = plt.subplots(figsize=(6,4))
                     
                     value_counts = df[value_select].value_counts()
                     total = value_counts.sum()
                     labels = [f"{idx}: {count} ({count / total * 100:.2f}%)" for idx, count in zip(value_counts.index, value_counts)]
                     
                     plt.pie(value_counts, labels=labels, autopct='%1.1f%%')
+                    plt.xticks(rotation=90)
                     st.pyplot(fig)
 
                 with col_chart2:
@@ -176,8 +180,10 @@ if uploaded_file:
         # Handling null values
         st.write("## Handling Null Values")
         col1, col2 = st.columns(2)
-
+        
+        # Initialize null_column_select as None to avoid referencing before assignment
         null_column_select = None
+        
         with col1:
             null_columns = null_column_finder(df)
             if null_columns:
@@ -185,6 +191,7 @@ if uploaded_file:
                 null_column_select = st.selectbox("Select Column", null_columns)
 
                 if imputation_type == "Simple Impute":
+                    # Check if the selected column is categorical or numerical
                     if df[null_column_select].dtype in ['object', 'category', 'string']:
                         imputer_value = st.selectbox("Select a category to impute", df[null_column_select].unique())
                     else:
@@ -228,37 +235,122 @@ if uploaded_file:
                             st.error(f"Error during KNN imputation: {e}")
 
         with col2:
+            # Check if null_column_select is not None before displaying null values
             if null_column_select:
                 null_value_count = df[null_column_select].isnull().sum()
                 null_counts_df = pd.DataFrame({
                     'Column Name': [null_column_select],
                     'Null Count': [null_value_count]
                 })
-                st.table(null_counts_df)
+                st.write(null_counts_df)
+        
+        
+        hr()
+        st.write("# Data Transformation")
+        st.write("#### this section is about Data transformation you will get various methods to transform data")
+        st.write(" ")
+        st.write(" ")
+        col1_for_transformation,col2_for_transformation=st.columns(2)
+
+        with col1_for_transformation:
+
+            st.write("#### Normalization and Standardization for Data")
+            
+            Normal_or_standard=st.selectbox("select what kind of Transformation you want?",["Normalization","Standardization"])
+            Normalization_select=st.selectbox("select a column for transformation",all_num_cols)
+            new_cols=f"{Normalization_select}_Normalize"
+            std_new_cols=f"{Normalization_select}_standardize"
+            button_to_appply_transformation=st.button("Apply")
+            try :
+                if Normalization_select and Normal_or_standard=="Normalization" and button_to_appply_transformation:
+                    df[new_cols]=(df[Normalization_select]-df[Normalization_select].min()/(df[Normalization_select].max()-df[Normalization_select].min()))
+                    st.session_state.df=df
+                elif Normalization_select and Normal_or_standard=="Standardization" and button_to_appply_transformation:
+                    df[std_new_cols]=(df[Normalization_select]-df[Normalization_select].mean())/df[Normalization_select].std()
+                    st.session_state.df=df
+                else:
+                    st.session_state.df=df
+
+            except Exception as e:
+                st.warning(e)
+
+
+
+        with col2_for_transformation:
+            st.write("#### Data Encoding")
+            st.write("convert Categorical data into Numbers using Encoding")
+            st.write(" ")
+            st.write(" ")
+            encoder_type=st.selectbox("select method of encoding",["labelEncoder","Ordinal Encoder","One-hot-encoder"])
+            columns_for_encoding=st.selectbox("select the column you want to apply encoding",columns_of_category)
+            apply_change=st.button("apply Change")
+            new_category_column_name=f"{columns_for_encoding}_{encoder_type}"
+            if (encoder_type=="labelEncoder") and (apply_change):
+
+                df["mid_process_encoder"]=pd.factorize(df[columns_for_encoding])[0]
+
+                le=LabelEncoder()
+                df[new_category_column_name]=le.fit_transform(df["mid_process_encoder"])
+                st.session_state.df=df
+            elif (encoder_type=="One-hot-encoder") and (apply_change):
+
+                df[new_category_column_name]=pd.get_dummies(df,columns=columns_for_encoding)
+                st.session_state.df=df
+
+            elif (encoder_type=="Ordinal Encoder") and (apply_change):
+
+                st.write("will update soon")
+
+
+
 
         hr()
+        st.write("# Remove columns")
+        st.write("Select Columns You Want to Drop")
 
-        # Column removal option
-        st.write("## Remove a Column")
-        columns_to_remove = st.multiselect("Select columns to remove", df.columns.tolist())
+        # Select columns to drop
+        columns = df.columns.tolist()
+        select_columns = st.multiselect("Select columns to drop", columns)
 
-        if columns_to_remove:
-            if st.button("Remove Columns"):
-                df.drop(columns_to_remove, axis=1, inplace=True)
-                st.session_state.df = df
-                st.success(f"Columns {', '.join(columns_to_remove)} removed successfully!")
+        # Drop selected columns from the DataFrame
+        if select_columns:
+            df.drop(columns=select_columns, inplace=True)
+            st.success(f"Dropped columns: {', '.join(select_columns)}")
+            st.session_state.df=df
+        else:
+            st.session_state.df=df
 
+        # Display the updated DataFrame
+        st.dataframe(df.head())
+
+            
+
+
+        # Download button for modified CSV
         hr()
+        st.write("### Download Your Cleaned Data")
+        
+        # Convert the modified DataFrame to CSV in memory buffer
+        if "df" in st.session_state:
+            csv_buffer = io.StringIO()
+            st.session_state.df.to_csv(csv_buffer, index=False)  # Ensure this DataFrame is the one you want to export
+            csv_data = csv_buffer.getvalue()
 
-        # Download option
-        st.write("## Download Cleaned Data")
-        to_csv = st.session_state.df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="Download Cleaned Data as CSV",
-            data=to_csv,
-            file_name='cleaned_data.csv',
-            mime='text/csv'
-        )
+            st.download_button(
+                label="Download Cleaned CSV",
+                data=csv_data,
+                file_name="cleaned_data.csv",
+                mime="text/csv",
+            )
+        else:
+            st.session_state.df=df
+
+        
+
+
 
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Error processing file: {e}")
+
+else:
+    st.warning("Please upload a CSV or Excel file to get started.") 
