@@ -5,3 +5,5 @@ matplotlib
 seabon
 plotly
 statistics
+io
+scikit-learn

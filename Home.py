@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import statistics as sts
 from sklearn.impute import KNNImputer
+from sklearn.preprocessing import LabelEncoder,OrdinalEncoder
 import io 
 
 # Function to categorize DataFrame columns
@@ -267,7 +268,7 @@ if uploaded_file:
 
         with col1_for_transformation:
 
-            st.write(" Normalization and Standardization for Data")
+            st.write("#### Normalization and Standardization for Data")
             
             Normal_or_standard=st.selectbox("select what kind of Transformation you want?",["Normalization","Standardization"])
             Normalization_select=st.selectbox("select a column for transformation",all_num_cols)
@@ -290,7 +291,37 @@ if uploaded_file:
 
 
         with col2_for_transformation:
-            pass
+            st.write("#### Data Encoding")
+            st.write("convert Categorical data into Numbers using Encoding")
+            st.write(" ")
+            st.write(" ")
+            encoder_type=st.selectbox("select method of encoding",["labelEncoder","Ordinal Encoder","One-hot-encoder"])
+            columns_for_encoding=st.selectbox("select the column you want to apply encoding",columns_of_category)
+            apply_change=st.button("apply Change")
+            new_category_column_name=f"{columns_for_encoding}_{encoder_type}"
+            if (encoder_type=="labelEncoder") and (apply_change):
+
+                df["mid_process_encoder"]=pd.factorize(df[columns_for_encoding])[0]
+
+                le=LabelEncoder()
+                df[new_category_column_name]=le.fit_transform(df["mid_process_encoder"])
+                st.session_state.df=df
+            elif (encoder_type=="One-hot-encoder") and (apply_change):
+
+                df[new_category_column_name]=pd.get_dummies(df,columns=columns_for_encoding)
+                st.session_state.df=df
+
+            elif (encoder_type=="Ordinal Encoder") and (apply_change):
+
+                st.write("will update soon")
+
+
+
+
+
+
+            
+
 
         # Download button for modified CSV
         hr()
