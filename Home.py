@@ -242,7 +242,7 @@ if uploaded_file:
                     'Column Name': [null_column_select],
                     'Null Count': [null_value_count]
                 })
-                st.DataFrame(null_counts_df,use_container_width=True)
+                st.write(null_counts_df)
         
         
         hr()
