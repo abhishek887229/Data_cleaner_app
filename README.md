@@ -22,7 +22,7 @@ This is a data analytics app designed to simplify the tasks of data preprocessin
 *Pending*
 
 ## How to Use:
-This app is deployed on Streamlit Community Cloud, so no installation is required. Just click on the following link to start using the app: [App Link Here].
+This app is deployed on Streamlit Community Cloud, so no installation is required. Just click on the following link to start using the app: [[App Link Here](https://datacleanerapp.streamlit.app/)].
 
 ## Technologies Used:
 - **Python** (v3.12)
