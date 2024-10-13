@@ -19,7 +19,10 @@ This is a data analytics app designed to simplify the tasks of data preprocessin
    - Users can select specific features to keep or remove, aiding in more efficient model development and analysis.
 
 ## Screenshots:
-*Pending*
+![image](https://github.com/user-attachments/assets/c185e4a3-bb17-421b-8076-4b74b6ccd360)
+![image](https://github.com/user-attachments/assets/c541746b-2417-4a22-9bb3-a0c6d16e8dcf)
+![image](https://github.com/user-attachments/assets/95af274a-a1ce-4245-a71f-44c0b0746e05)
+![image](https://github.com/user-attachments/assets/557477db-ced6-4105-91e9-8f82b2015986)
 
 ## How to Use:
 This app is deployed on Streamlit Community Cloud, so no installation is required. Just click on the following link to start using the app: [[App Link Here](https://datacleanerapp.streamlit.app/)].
