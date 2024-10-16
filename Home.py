@@ -7,6 +7,7 @@ from sklearn.impute import KNNImputer
 from sklearn.preprocessing import LabelEncoder,OrdinalEncoder
 import io 
 uploaded_file = None
+xyzabc="new"
 # Function to categorize DataFrame columns
 def categorized_cols(df):
     """Categorize the columns into different types."""
